@@ -109,6 +109,25 @@ installer left next to it.
 
 ---
 
+## Verified
+
+Eight cases, both directions — a guard that only fires is as useless as one that
+never does:
+
+| Case | Expected | Result |
+|---|---|---|
+| Bash output contains failing tests | fires | ✅ |
+| Bash output is a clean pass (`fail 0`) | silent | ✅ |
+| `cat` of a file *describing* failures | silent | ✅ |
+| Verification-shaped prompt | fires | ✅ |
+| Ordinary feature request | silent | ✅ |
+| 5th consecutive same-tool call | fires | ✅ |
+| A different tool in between | counter resets | ✅ |
+| Installer run twice | no duplicate entries | ✅ |
+
+The installer was also checked against a `settings.json` that already had
+permissions and a hook of its own: both survived.
+
 ## What this is not
 
 - **Not a linter.** It governs what the agent *claims*, not what your code looks like.
