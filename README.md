@@ -1,0 +1,127 @@
+# Claude Code Guardrails
+
+Three hooks that stop your coding agent from telling you it did something it did not do.
+
+---
+
+## The problem
+
+Your agent runs a command. It exits non-zero. The agent writes *"Fixed — tests are passing now."*
+
+The failure is right there in the transcript. Nobody reads it. You find out three commits later.
+
+This is not a model being dumb. It is a **structural** gap: the agent summarises a turn from
+its own recollection of the turn, and recollection is exactly the thing that is unreliable.
+Rules in `CLAUDE.md` do not close it, because a rule that is *in context* is not a rule that is
+*applied at the moment it matters*.
+
+Measured on one workspace: with the verification rule written in the project instructions and
+nothing else, the agent followed it in **13 of 22** verification-shaped replies — **59%**. The
+rule was in context all 22 times.
+
+Hooks fire at the moment. That is the whole difference.
+
+---
+
+## What you get
+
+### `verify-before-done.sh` — the agent cannot call a failure a success
+
+Runs after every Bash call. Scans the output for failure signals — non-zero exits, failing test
+counts, tracebacks, `ECONNREFUSED`, permission denials — and injects a note naming what it found.
+The agent then cannot summarise the turn as done without addressing it.
+
+It does **not** block the command. It makes the failure impossible to walk past.
+
+Includes the fix for the obvious false positive: reading a file that *describes* failures
+(`cat`, `grep`, `--help`) is not a failure. A hook that cries wolf gets ignored, and an ignored
+hook is worse than none.
+
+### `quantify-claims.sh` — "did you check all of it?" gets a real answer
+
+Fires on verification-shaped prompts. Requires the reply to open with:
+
+```
+verified n% (numerator/denominator) - no guessing
+```
+
+and enforces the parts that actually matter:
+
+- **State the denominator.** A bare "100%" is void.
+- **State how the denominator was cut.** The cut changes the answer — the same log sliced two
+  ways produced 38% and 59%.
+- **Count, don't round.** A guess formatted as a percentage is worse than an admitted guess,
+  because it looks like evidence.
+- **Name what was not looked at.** Grepped 13 keywords? Say the rest is unchecked.
+- **Label reported numbers as reported**, not measured.
+- **"It can't be done" is a claim too** — check a second path before asserting a limitation.
+
+### `loop-breaker.sh` — stop the retry spiral
+
+Counts consecutive calls to the same tool. Past the threshold (default 5) it tells the agent to
+stop and pick a different move: re-reason from evidence, route around the problem, or hand the
+decision back.
+
+Using a different tool resets the counter, so ordinary work never trips it. `Bash`, `Read`,
+`Grep`, `Edit` and friends are skipped by default — a run of those is investigation, not a loop.
+An earlier version without that skip list fired on a healthy code review at five Bash calls.
+
+Tune with `GUARDRAILS_LOOP_THRESHOLD` and `GUARDRAILS_LOOP_SKIP`. Prefer adding a tool to the
+skip list over raising the threshold — a higher threshold hides real loops too.
+
+---
+
+## Install
+
+Requires `jq`, and Claude Code.
+
+```bash
+./install.sh                 # this project
+./install.sh /path/to/repo   # a specific project
+./install.sh --global        # ~/.claude, all projects
+```
+
+The installer **merges** into your existing `settings.json` — your permissions and your own hooks
+are preserved — writes a timestamped backup first, and is idempotent. Running it twice does not
+duplicate entries.
+
+Then restart Claude Code, or open `/hooks` once, so the config reloads.
+
+### Verify it took
+
+```bash
+echo '{"tool_name":"Bash","tool_input":{"command":"npm test"},"tool_response":{"stdout":"3 tests failed"}}' \
+  | .claude/hooks/verify-before-done.sh
+```
+
+You should get a JSON object back. Silence means it is not wired up.
+
+---
+
+## Uninstall
+
+```bash
+rm .claude/hooks/{verify-before-done,quantify-claims,loop-breaker}.sh
+```
+
+and remove the three entries from `.claude/hooks` in `settings.json`, or restore the backup the
+installer left next to it.
+
+---
+
+## What this is not
+
+- **Not a linter.** It governs what the agent *claims*, not what your code looks like.
+- **Not a blocker.** Nothing here stops a tool call. Everything here makes a fact unskippable.
+- **Not magic.** A determined model can still write a bad summary. These raise the cost of doing
+  it from zero to non-zero, which in practice is most of the fight.
+
+## Scope
+
+Written for Claude Code's hook system (`PostToolUse`, `UserPromptSubmit`) on macOS and Linux.
+Plain `bash` + `jq`, no other dependencies, nothing phones home. Read them — they are under
+120 lines each, and you should not install hooks you have not read.
+
+## License
+
+MIT. Use them, change them, ship them inside your own tooling.
