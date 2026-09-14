@@ -139,7 +139,7 @@ permissions and a hook of its own: both survived.
 
 Written for Claude Code's hook system (`PostToolUse`, `UserPromptSubmit`) on macOS and Linux.
 Plain `bash` + `jq`, no other dependencies, nothing phones home. Read them — they are under
-120 lines each, and you should not install hooks you have not read.
+70 lines each (191 total), and you should not install hooks you have not read.
 
 ## License
 

@@ -13,7 +13,7 @@ a single workspace, it says so.
 | Rule-in-context compliance without a hook | **13 of 22 (59%)** | one workspace, verification-shaped replies |
 | Test cases the hooks passed | **8** | true positive, false positive, and reset paths |
 | False positive fixed during testing | **1** | hook fired on `cat` of its own source |
-| Size | **~120 lines each**, 3 hooks | `wc -l` |
+| Size | **58–69 lines each, 191 total**, 3 hooks | `wc -l` 2026-09-14 |
 | Dependencies | bash + jq | — |
 
 **Do not claim:** that it makes an agent honest, that it prevents all false
@@ -72,7 +72,7 @@ Eight test cases, both directions — fires when it should, silent when it
 shouldn't. The installer merges into your existing `settings.json` rather than
 replacing it, backs up first, and is idempotent.
 
-bash + jq, nothing else, nothing phones home. Each hook is about 120 lines —
+bash + jq, nothing else, nothing phones home. Each hook is under 70 lines —
 short enough that you should read them before installing, and I'd rather you did.
 
 [link]
@@ -120,7 +120,7 @@ file containing failure text, and the third fired on a legitimate review at five
 Bash calls. Eight test cases cover both directions.
 
 bash and jq. The installer merges into an existing settings.json, backs it up,
-and is idempotent. ~120 lines per hook.
+and is idempotent. 58–69 lines per hook, 191 total.
 
 What it doesn't do: it can't make a determined model write an accurate summary.
 It raises the cost of not doing so from zero to non-zero. In my use that has
@@ -171,9 +171,12 @@ Norm: one idea per post. Numbers early. No thread padding.
 
 ## Sequencing
 
-Reddit first — it tolerates a longer problem statement and the feedback is
-usable. HN second, only if the Reddit thread surfaces no correctness problem;
-Show HN gets one shot. X anytime.
+**HN first** (revised 2026-09-14). The original plan was Reddit first, but the
+posting account has karma 1 — large subreddits filter that out, so the Reddit
+thread would surface nothing. Show HN gets one shot; run the correctness
+self-check (the "do not claim" list above) before posting instead of relying
+on a Reddit thread to catch it. X second, same day is fine for X only. Reddit
+last, after 2–3 weeks of karma from ordinary replies.
 
 Do not post the same day to more than one. Cross-posting within hours reads as
 a campaign and gets treated as one.
