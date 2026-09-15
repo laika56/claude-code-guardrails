@@ -72,10 +72,10 @@ Eight test cases, both directions — fires when it should, silent when it
 shouldn't. The installer merges into your existing `settings.json` rather than
 replacing it, backs up first, and is idempotent.
 
-bash + jq, nothing else, nothing phones home. Each hook is under 70 lines —
+bash + jq, nothing else, nothing phones home. Each hook is 58–69 lines (191 total) —
 short enough that you should read them before installing, and I'd rather you did.
 
-[link]
+https://github.com/laika56/claude-code-guardrails
 
 Happy to hear where it misfires for you. The false-positive surface is the part
 I'm least confident about.
@@ -143,7 +143,7 @@ Norm: one idea per post. Numbers early. No thread padding.
 >
 > Being in context ≠ being applied. Moved it to a hook instead.
 >
-> [link]
+> https://github.com/laika56/claude-code-guardrails
 
 ### Option 2 — the failure mode
 
@@ -153,7 +153,7 @@ Norm: one idea per post. Numbers early. No thread padding.
 >
 > Tests passed because the code never changed.
 >
-> Three hooks that make that unskippable: [link]
+> Three hooks that make that unskippable: https://github.com/laika56/claude-code-guardrails
 
 ### Option 3 — the false positive
 
@@ -165,7 +165,7 @@ Norm: one idea per post. Numbers early. No thread padding.
 > A hook that cries wolf gets ignored, which is worse than no hook. Fixed, then
 > shipped.
 >
-> [link]
+> https://github.com/laika56/claude-code-guardrails
 
 ---
 
