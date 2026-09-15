@@ -112,7 +112,11 @@ installer left next to it.
 ## Verified
 
 Eight cases, both directions — a guard that only fires is as useless as one that
-never does:
+never does. Run them yourself:
+
+```
+./test.sh
+```
 
 | Case | Expected | Result |
 |---|---|---|
@@ -125,8 +129,14 @@ never does:
 | A different tool in between | counter resets | ✅ |
 | Installer run twice | no duplicate entries | ✅ |
 
-The installer was also checked against a `settings.json` that already had
-permissions and a hook of its own: both survived.
+The table is the test file, in order. Four of the eight assert *silence*: the
+first hook used to fire on `cat` of its own source, and an early loop-breaker
+fired on a healthy review at five Bash calls. A hook that cries wolf gets
+ignored, which is worse than no hook, so both regressions have a case here.
+
+The installer case runs the real installer twice against a `settings.json` that
+already contains an unrelated hook, then asserts no duplicate commands and that
+the pre-existing hook survived.
 
 ## What this is not
 
