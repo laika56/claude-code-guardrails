@@ -156,6 +156,7 @@ Plain `bash` + `jq`, no other dependencies, nothing phones home. Read them — t
 - The measurement behind this repo, written up: [Your coding agent said the tests pass. The command exited 1.](https://repro-log.blogspot.com/2026/09/your-coding-agent-said-tests-pass.html)
 - Same hooks as a zip with the installer, plus email support if it misfires on your setup: [pay what you want (from $2) on Gumroad](https://quietfail.gumroad.com/l/claude-code-guardrails). The code here is the whole product; pay only if the support is worth it to you.
 - A sibling harness for *unattended* runs (catches "exit 0 with zero changed files", edits outside scope, half-finished work reported as done): [agent-delegate](https://quietfail.gumroad.com/l/agent-delegate).
+- Need a small automation job done (Python, Excel/VBA, Google Sheets, scraping)? Open an issue titled `[task]` with dummy sample data, get a fixed quote, then pay through [Gumroad (50% deposit, 50% on delivery)](https://quietfail.gumroad.com/l/custom-task).
 
 ## License
 
