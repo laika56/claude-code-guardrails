@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# test.sh - the eight cases in the README's "Verified" table, run for real.
+# test.sh - the nine cases in the README's "Verified" table, run for real.
 #
 #   ./test.sh
 #
 # Both directions matter. A hook that only proves it fires is half a test: the
 # expensive failure is the one that cries wolf, gets ignored, and takes the real
-# warnings down with it. Four of these eight assert silence.
+# warnings down with it. Four of these nine assert silence.
 #
 # No framework. Each case pipes a hook the JSON shape Claude Code sends it and
 # checks whether additionalContext came back.
@@ -55,6 +55,10 @@ run "Bash output is a clean pass (fail 0)" verify-before-done.sh silent \
 run "cat of a file describing failures" verify-before-done.sh silent \
   "$(bash_event 'cat notes.md' 'we used to see exit code 1 here, now fixed')"
 
+# Claude Code reports a non-zero exit as PostToolUseFailure, not PostToolUse.
+run "failed command (PostToolUseFailure event)" verify-before-done.sh fires \
+  '{"hook_event_name":"PostToolUseFailure","tool_name":"Bash","tool_input":{"command":"ls /nope"},"tool_response":{"stderr":"ls: /nope: No such file or directory"},"error":"Exit code 1"}'
+
 echo "quantify-claims"
 run "verification-shaped prompt" quantify-claims.sh fires \
   '{"prompt":"did you check all of the files?"}'
@@ -83,7 +87,7 @@ cat > "$TMP/.claude/settings.json" <<'JSON'
 JSON
 ./install.sh "$TMP" >/dev/null 2>&1
 ./install.sh "$TMP" >/dev/null 2>&1
-DUPES=$(jq '[.hooks[][]?.hooks[]?.command] | group_by(.) | map(select(length > 1)) | length' "$TMP/.claude/settings.json" 2>/dev/null)
+DUPES=$(jq '[.hooks | to_entries[] | .key as $e | .value[]?.hooks[]?.command | "\($e) \(.)"] | group_by(.) | map(select(length > 1)) | length' "$TMP/.claude/settings.json" 2>/dev/null)
 KEPT=$(jq '[.hooks[][]?.hooks[]?.command] | index("/existing/mine.sh") != null' "$TMP/.claude/settings.json" 2>/dev/null)
 [ "$DUPES" = "0" ] && [ "$KEPT" = "true" ] && check "installer run twice, no duplicates" yes || check "installer run twice, no duplicates" no
 rm -rf "$TMP"

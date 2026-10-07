@@ -1,0 +1,46 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/private/tmp/claude-501/-Users-jh-Desktop-claude/b0694b4c-045b-45ab-8efc-96d52e2b194c/scratchpad/gh/claude-code-guardrails/.claude/hooks/verify-before-done.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/private/tmp/claude-501/-Users-jh-Desktop-claude/b0694b4c-045b-45ab-8efc-96d52e2b194c/scratchpad/gh/claude-code-guardrails/.claude/hooks/loop-breaker.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/private/tmp/claude-501/-Users-jh-Desktop-claude/b0694b4c-045b-45ab-8efc-96d52e2b194c/scratchpad/gh/claude-code-guardrails/.claude/hooks/verify-before-done.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/private/tmp/claude-501/-Users-jh-Desktop-claude/b0694b4c-045b-45ab-8efc-96d52e2b194c/scratchpad/gh/claude-code-guardrails/.claude/hooks/quantify-claims.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

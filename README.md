@@ -111,7 +111,7 @@ installer left next to it.
 
 ## Verified
 
-Eight cases, both directions — a guard that only fires is as useless as one that
+Nine cases, both directions — a guard that only fires is as useless as one that
 never does. Run them yourself:
 
 ```
@@ -123,16 +123,23 @@ never does. Run them yourself:
 | Bash output contains failing tests | fires | ✅ |
 | Bash output is a clean pass (`fail 0`) | silent | ✅ |
 | `cat` of a file *describing* failures | silent | ✅ |
+| Failed command (`PostToolUseFailure` event) | fires | ✅ |
 | Verification-shaped prompt | fires | ✅ |
 | Ordinary feature request | silent | ✅ |
 | 5th consecutive same-tool call | fires | ✅ |
 | A different tool in between | counter resets | ✅ |
 | Installer run twice | no duplicate entries | ✅ |
 
-The table is the test file, in order. Four of the eight assert *silence*: the
+The table is the test file, in order. Four of the nine assert *silence*: the
 first hook used to fire on `cat` of its own source, and an early loop-breaker
 fired on a healthy review at five Bash calls. A hook that cries wolf gets
 ignored, which is worse than no hook, so both regressions have a case here.
+
+The failed-command case exists because of a real miss: Claude Code delivers a Bash
+call that exits non-zero as a `PostToolUseFailure` event, not `PostToolUse`. Earlier
+versions only registered for `PostToolUse`, so the one situation the hook is for
+never reached it, while all eight tests still passed. The installer now registers
+the hook for both events.
 
 The installer case runs the real installer twice against a `settings.json` that
 already contains an unrelated hook, then asserts no duplicate commands and that
@@ -147,9 +154,9 @@ the pre-existing hook survived.
 
 ## Scope
 
-Written for Claude Code's hook system (`PostToolUse`, `UserPromptSubmit`) on macOS and Linux.
+Written for Claude Code's hook system (`PostToolUse`, `PostToolUseFailure`, `UserPromptSubmit`) on macOS and Linux.
 Plain `bash` + `jq`, no other dependencies, nothing phones home. Read them — they are under
-70 lines each (191 total), and you should not install hooks you have not read.
+70 lines each (197 total), and you should not install hooks you have not read.
 
 ## Related
 

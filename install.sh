@@ -45,6 +45,7 @@ jq --arg dir "$HOOK_DIR" '
     );
   .hooks = (.hooks // {})
   | add("PostToolUse";     "Bash"; $dir + "/verify-before-done.sh")
+  | add("PostToolUseFailure"; "Bash"; $dir + "/verify-before-done.sh")
   | add("UserPromptSubmit"; "";    $dir + "/quantify-claims.sh")
   | add("PostToolUse";     "";     $dir + "/loop-breaker.sh")
 ' "$SETTINGS" > "$SETTINGS.tmp" && mv "$SETTINGS.tmp" "$SETTINGS"
